@@ -1,0 +1,14 @@
+*.class
+bin/
+target/
+
+.DS_store
+
+.mvn/
+mvnw
+mvnw.cmd
+
+.env
+target/
+
+.vscode
