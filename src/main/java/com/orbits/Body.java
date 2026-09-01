@@ -8,20 +8,15 @@ public class Body {
     Vector3D acelerationVector;
     double mass;
     int color;
-    
-    public void setColor(int color) {
-        this.color = color;
-    }
+    final static double G=  39.4784;
 
-    final static double G= 1.0; 
-
-    public Body(String name,double mass, Vector3D positionVector, Vector3D velocityVector){
+    public Body(String name,double mass, Vector3D positionVector, Vector3D velocityVector, int color){
         this.name= name;
         this.positionVector= positionVector;
         this.velocityVector= velocityVector;
         this.mass= mass;
         this.acelerationVector= new Vector3D(0, 0,0);
-        this.color= 0xF33;
+        this.color= color;
     }
 
     public Vector3D calculateOrbitalForce(Body other){
