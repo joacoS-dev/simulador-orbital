@@ -21,40 +21,46 @@ public class OrbitApp extends Application {
     Simulation simulation;
     private final Map<Body, Sphere> sphereMap = new HashMap<>();
     private final Group root = new Group();
-    private static final double positionScale = 400;
-    private static final double bodyScale= 900; 
+    private static final double positionScale = 1500;
+    private static final double bodyScale= 1500; 
 
     @Override
     public void start(Stage stage){ 
         SolarSystem solarSystem= new SolarSystem();
         List<Body> bodies= solarSystem.getSystemBodies();
         this.simulation = new Simulation(bodies);
+        javafx.scene.PointLight sunLight = new javafx.scene.PointLight(Color.WHITE);
+        sunLight.setTranslateX(0);
+        sunLight.setTranslateY(0);
+        sunLight.setTranslateZ(0);
+        root.getChildren().add(sunLight);
 
         for (Body b : bodies) {
             double radius = b.name.equals("sun")
-            ? Math.cbrt(b.mass) * 80
+            ? Math.cbrt(b.mass) * 350
             : Math.cbrt(b.mass) * bodyScale;
-            Sphere sphere = new Sphere(radius,
-                64
-            );
+            Sphere sphere = new Sphere(radius, 64);
             String texturePath = "/" + b.name + ".jpg";
             Image texture = new Image(
                 getClass().getResourceAsStream(texturePath)
             );
-
             PhongMaterial material = new PhongMaterial();
+            if (b.name.equals("sun")) {
+                material.setSelfIlluminationMap(texture);
+                sunLight.getExclusionScope().add(sphere);
+            }
             material.setDiffuseMap(texture);
             sphere.setMaterial(material);
             sphereMap.put(b, sphere);
             root.getChildren().add(sphere);
         }
 
-        AmbientLight ambientLight = new AmbientLight(Color.WHITE);
+        AmbientLight ambientLight = new AmbientLight(Color.rgb(40, 40, 40));
         root.getChildren().add(ambientLight);
 
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.getTransforms().addAll(
-                new Rotate(-20, Rotate.X_AXIS), 
+                new Rotate(-80, Rotate.X_AXIS), 
                 new javafx.scene.transform.Translate(0, 0, -2200) 
         );
         camera.setFarClip(5000);
@@ -70,7 +76,7 @@ public class OrbitApp extends Application {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                simulation.steps(0.0005); 
+                simulation.steps(0.0001); 
                 for (Body b : bodies) {
                     Sphere s = sphereMap.get(b);
                     s.setTranslateX(b.positionVector.getX() * positionScale);
